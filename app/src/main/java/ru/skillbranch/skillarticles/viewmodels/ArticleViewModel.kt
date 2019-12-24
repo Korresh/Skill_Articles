@@ -19,6 +19,7 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
                    shareLink = article.shareLink,
                    title = article.title,
                    category = article.category,
+                   author = article.author,
                    categoryIcon = article.categoryIcon,
                    date = article.date.format()
            )
