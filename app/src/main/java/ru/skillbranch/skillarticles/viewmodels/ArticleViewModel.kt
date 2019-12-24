@@ -89,7 +89,7 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
             Notify.ActionMessage(
                     "Remove from bookmarks", //message
                     "Bookmark be added!",//action label on snackbar
-                    toggleBookmark //handler function, if press "No, still like it" on snackbar, then toggle again
+                    toggleBookmark //handler function, if press "Bookmark be added" on snackbar, then toggle again
             )
         }
         notify(msg)
