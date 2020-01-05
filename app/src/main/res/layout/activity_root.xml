@@ -39,6 +39,7 @@
     <ru.skillbranch.skillarticles.ui.custom.ArticleSubmenu
         android:id="@+id/submenu"
         android:theme="@style/ArticleBarsTheme"
+        style="@style/ArticleBarsTheme"
         android:layout_width="200dp"
         android:layout_height="96dp"
         android:layout_gravity="bottom|right"

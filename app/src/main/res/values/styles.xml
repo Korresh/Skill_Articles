@@ -21,12 +21,16 @@
 
         <item name="snackbarStyle">@style/CustomSnackbar</item>
 
+
+
     </style>
     <style parent="ThemeOverlay.MaterialComponents.Dark.ActionBar" name="ArticleBarsTheme">
         <item name="colorPrimary">@color/color_article_bar</item>
         <item name="colorOnPrimary">@color/color_on_article_bar</item>
         <item name="colorSurface">@color/color_article_bar</item>
         <item name="colorControlNormal">@color/color_on_article_bar</item>
+        <item name="android:textColorHint">@color/color_gray</item>
+        <item name="android:textColorPrimary">?attr/colorOnPrimary</item>
     </style>
 
     <style parent="Widget.MaterialComponents.Toolbar.Primary" name="ArticleToolbar">
@@ -43,5 +47,8 @@
     <style name="CustomSnackbar" parent="Widget.MaterialComponents.Snackbar">
         <item name="layout_insetEdge">bottom</item>
     </style>
+
+
+
 
 </resources>
