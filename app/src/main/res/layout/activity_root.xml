@@ -57,8 +57,8 @@
         android:layout_gravity="bottom"
         android:theme="@style/ArticleBarsTheme"
         android:elevation="4dp"
-        app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"
-        app:layout_insetEdge="bottom"/>
+        app:layout_insetEdge="bottom"
+        app:layout_behavior="ru.skillbranch.skillarticles.ui.custom.behaviors.BottombarBehavior"/>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
