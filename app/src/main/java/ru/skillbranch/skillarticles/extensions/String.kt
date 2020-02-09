@@ -2,6 +2,7 @@ package ru.skillbranch.skillarticles.extensions
 
 import java.util.*
 
+
 fun String?.indexesOf(substr: String, ignoreCase: Boolean = true): List<Int>{
     this ?: return listOf()
     if (substr.isBlank()) return listOf()
