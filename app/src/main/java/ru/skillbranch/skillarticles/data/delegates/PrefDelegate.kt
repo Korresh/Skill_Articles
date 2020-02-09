@@ -10,11 +10,11 @@ class PrefDelegate<T>(private val defaultValue: T) : ReadWriteProperty<PrefManag
     override fun getValue(thisRef: PrefManager, property: KProperty<*>): T? {
         with(thisRef.preferences) {
             return when (defaultValue) {
-                is Boolean -> (getBoolean(property.name, defaultValue) as? T) ?: defaultValue
-                is String -> (getString(property.name, defaultValue) as? T) ?: defaultValue
-                is Float -> (getFloat(property.name, defaultValue) as? T) ?: defaultValue
-                is Int -> (getInt(property.name, defaultValue) as? T) ?: defaultValue
-                is Long -> (getLong(property.name, defaultValue) as? T) ?: defaultValue
+                is Boolean -> getBoolean(property.name, defaultValue) as? T
+                is String -> getString(property.name, defaultValue) as? T
+                is Float -> getFloat(property.name, defaultValue) as? T
+                is Int -> getInt(property.name, defaultValue) as? T
+                is Long -> getLong(property.name, defaultValue) as? T
                 else ->  error("This type can`t support")
 
             }
