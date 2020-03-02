@@ -1,6 +1,5 @@
 package ru.skillbranch.skillarticles.markdown
 
-import java.lang.reflect.Type
 import java.util.regex.Pattern
 
 object MarkdownParser {
@@ -37,8 +36,24 @@ object MarkdownParser {
      * clear markdown text to string without markdown characters
      */
     fun clear(string: String?): String? {
-        return null
+        if (string == null) return null
+        val markdownString = parse(string)
+        var newString =""
+        for (i in markdownString.elements){
+            newString += if (i is Element.Text) i.text
+            else  parseElement(i)
+
+        }
+               return newString
     }
+
+    private fun parseElement(i: Element): CharSequence {
+        return if (i.elements.isNotEmpty()) {
+            i.elements.fold("") { result, i -> result + parseElement(i) }
+        } else i.text
+    }
+
+
 
     /**
      * find markdown elements in markdown text
