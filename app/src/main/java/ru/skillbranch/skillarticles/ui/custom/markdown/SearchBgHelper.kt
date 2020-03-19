@@ -175,8 +175,8 @@ class SingleLineRender(
     padding: Int,
     val drawable : Drawable
 ) : SearchBgRender(padding){
-    private var lineBottom: Int = 0
     private var lineTop: Int = 0
+    private var lineBottom: Int = 0
 
     override fun draw(
         canvas: Canvas,
@@ -262,6 +262,4 @@ class MultiLineRender(
         drawableRight.setBounds(start, top,end, bottom)
         drawableRight.draw(canvas)
     }
-
-
 }
