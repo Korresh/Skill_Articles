@@ -3,7 +3,6 @@ package ru.skillbranch.skillarticles.extensions
 import android.app.Activity
 import android.content.Context
 import android.content.res.Resources
-import android.inputmethodservice.InputMethodService
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
@@ -40,6 +39,8 @@ fun Context.attrValue( @AttrRes res: Int ): Int {
     else throw Resources.NotFoundException("Resource with id $res not found")
 }
 
+
+@Suppress("DEPRECATION")
 val Context.isNetworkAvailable: Boolean
     get() {
         val cm = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager

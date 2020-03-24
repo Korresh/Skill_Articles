@@ -23,13 +23,14 @@ fun Layout.getLineTopWithoutPadding(line: Int): Int {
 /**
  * Returns the bottom of the Layout after removing the extra padding applied by the Layout.
 */
-fun Layout.getLineBottomWithoutPadding(line: Int): Int {
+fun Layout.getLineBottomWithoutPadding(line: Int): Int{
     var lineBottom = getLineBottomWithoutSpacing(line)
     if (line == lineCount.dec()) {
         lineBottom -= bottomPadding
     }
     return lineBottom
 }
+
 /**
  * Returns the line bottom discarding the line spacing added.
  */

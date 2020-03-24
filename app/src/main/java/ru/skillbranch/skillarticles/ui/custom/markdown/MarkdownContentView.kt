@@ -56,7 +56,7 @@ class MarkdownContentView @JvmOverloads constructor(
                 it.layout(
                     left - paddingLeft / 2,
                     usedHeight,
-                    r -paddingRight / 2,
+                    right -paddingRight / 2,
                     usedHeight +it.measuredHeight
                 )
             }else{
@@ -73,8 +73,8 @@ class MarkdownContentView @JvmOverloads constructor(
 
     fun setContent(content: List<MarkdownElement>) {
         elements = content
-        content.forEach {
-            when(it) {
+        content.forEachIndexed { index, child ->
+            when(child) {
                 is MarkdownElement.Text -> {
                     val tv = MarkdownTextView(context, textSize).apply {
 
@@ -86,7 +86,7 @@ class MarkdownContentView @JvmOverloads constructor(
                     }
 
                     MarkdownBuilder(context)
-                        .markdownToSpan(it)
+                        .markdownToSpan(child)
                         .run {
                             tv.setText(this,TextView.BufferType.SPANNABLE)
                         }
@@ -96,18 +96,22 @@ class MarkdownContentView @JvmOverloads constructor(
                     val iv = MarkdownImageView(
                         context,
                         textSize,
-                        it.image.url,
-                        it.image.text,
-                        it.image.alt
-                    )
+                        child.image.url,
+                        child.image.text,
+                        child.image.alt
+                    ).apply {
+                        id = index
+                    }
                     addView(iv)
                 }
                 is MarkdownElement.Scroll -> {
                     val sv= MarkdownCodeView(
                         context,
                         textSize,
-                        it.blockCode.text
-                    )
+                        child.blockCode.text
+                    ).apply {
+                        id = index
+                    }
                     addView(sv)
                 }
             }

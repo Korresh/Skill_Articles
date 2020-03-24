@@ -4,4 +4,6 @@ import android.graphics.Color
 import android.text.style.ForegroundColorSpan
 
 
-open class SearchSpan : ForegroundColorSpan(Color.WHITE)
+open class SearchSpan() : ForegroundColorSpan(Color.WHITE){
+
+}

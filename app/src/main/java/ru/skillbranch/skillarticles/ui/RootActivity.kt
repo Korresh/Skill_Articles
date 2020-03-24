@@ -41,21 +41,94 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     public override val binding: ArticleBinding by lazy { ArticleBinding ()}
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        viewModel.observeNotifications(this) {
+            renderNotification(it)
+        }
+    }
+
     override fun setupViews() {
         setupToolbar()
         setupBottombar()
         setupSubmenu()
     }
 
+    override fun renderNotification(notify: Notify) {
+        val snackbar = Snackbar
+            .make(coordinator_container, notify.message, Snackbar.LENGTH_LONG)
+            .setAnchorView(bottombar)
+            .setActionTextColor(getColor(R.color.color_accent_dark))
 
-    override fun showSearchBar() {
-        bottombar.setSearchState(true)
-        scroll.setMarginOptionally(bottom = dpToIntPx((56)))
+        when (notify){
+            is Notify.TextMessage -> {/*nothing*/}
+            is Notify.ActionMessage -> {
+                snackbar.setAction(notify.actionLabel) {
+                    notify.actionHandler.invoke()
+                }
+            }
+            is Notify.ErrorMessage -> {
+                with(snackbar){
+                    setBackgroundTint(getColor(R.color.design_default_color_error))
+                    setTextColor(getColor(android.R.color.white))
+                    setActionTextColor(getColor(android.R.color.white))
+                    setAction(notify.errLabel){
+                        notify.errHandler?.invoke()
+                    }
+                }
+            }
+        }
+        snackbar.show()
     }
 
-    override fun hideSearchBar() {
-        bottombar.setSearchState(false)
-        scroll.setMarginOptionally(bottom = dpToIntPx((0)))
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_search) {
+            viewModel.handleSearchMode(true)
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun setupCopyListener(){
+        tv_text_content.setCopyListener { copy ->
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("Copied code",copy)
+            clipboard.setPrimaryClip(clip)
+            viewModel.handleCopyCode()
+        }
+    }
+
+
+    private fun setupSubmenu() {
+        btn_text_up.setOnClickListener { viewModel.handleUpText() }
+        btn_text_down.setOnClickListener { viewModel.handleDownText() }
+        switch_mode.setOnClickListener { viewModel.handleNightMode() }
+    }
+
+    private fun setupBottombar() {
+        btn_like.setOnClickListener { viewModel.handleLike() }
+        btn_bookmark.setOnClickListener { viewModel.handleBookmark() }
+        btn_share.setOnClickListener { viewModel.handleShare() }
+        btn_settings.setOnClickListener { viewModel.handleToggleMenu() }
+
+        btn_result_up.setOnClickListener{
+            if (!tv_text_content.hasFocus()) tv_text_content.requestFocus()
+            hideKeyboard(btn_result_up)
+            viewModel.handleUpResult()
+        }
+
+        btn_result_down.setOnClickListener{
+            if (!tv_text_content.hasFocus()) tv_text_content.requestFocus()
+            hideKeyboard(btn_result_down)
+            viewModel.handleDownResult()
+        }
+
+        btn_search_close.setOnClickListener{
+            viewModel.handleSearchMode(false)
+            invalidateOptionsMenu()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -64,7 +137,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         val searchView = (searchItem?.actionView as? SearchView)
         searchView?.queryHint = "Search"
 
-                //restore SearchView
+        //restore SearchView
         if (binding.isSearch){
             searchItem?.expandActionView()
             searchView?.setQuery(binding.searchQuery, false)
@@ -98,65 +171,6 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
         return super.onCreateOptionsMenu(menu)
     }
 
-
-
-    override fun renderNotification(notify: Notify) {
-        val snackbar = Snackbar
-            .make(coordinator_container, notify.message, Snackbar.LENGTH_LONG)
-            .setAnchorView(bottombar)
-
-        when (notify){
-            is Notify.TextMessage -> {/*nothing*/}
-            is Notify.ActionMessage -> {
-                snackbar.setActionTextColor(getColor(R.color.color_accent_dark))
-                snackbar.setAction(notify.actionLabel){
-                    notify.actionHandler?.invoke()
-                }
-            }
-            is Notify.ErrorMessage -> {
-                with(snackbar){
-                    setBackgroundTint(getColor(R.color.design_default_color_error))
-                    setTextColor(getColor(android.R.color.white))
-                    setActionTextColor(getColor(android.R.color.white))
-                    setAction(notify.errLabel){
-                        notify.errHandler?.invoke()
-                    }
-                }
-            }
-        }
-        snackbar.show()
-    }
-
-    private fun setupSubmenu() {
-        btn_text_up.setOnClickListener { viewModel.handleUpText() }
-        btn_text_down.setOnClickListener { viewModel.handleDownText() }
-        switch_mode.setOnClickListener { viewModel.handleNightMode() }
-    }
-
-    private fun setupBottombar() {
-        btn_like.setOnClickListener { viewModel.handleLike() }
-        btn_bookmark.setOnClickListener { viewModel.handleBookmark() }
-        btn_share.setOnClickListener { viewModel.handleShare() }
-        btn_settings.setOnClickListener { viewModel.handleToggleMenu() }
-
-        btn_result_up.setOnClickListener{
-            if (!tv_text_content.hasFocus()) tv_text_content.requestFocus()
-            hideKeyboard(btn_result_up)
-            viewModel.handleUpResult()
-        }
-
-        btn_result_down.setOnClickListener{
-            if (!tv_text_content.hasFocus()) tv_text_content.requestFocus()
-            hideKeyboard(btn_result_down)
-            viewModel.handleDownResult()
-        }
-
-        btn_search_close.setOnClickListener{
-            viewModel.handleSearchMode(false)
-            invalidateOptionsMenu()
-        }
-    }
-
     private fun setupToolbar (){
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -169,22 +183,21 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
             it.marginEnd = this.dpToIntPx(16)
             logo.layoutParams = it
         }
+
     }
-    private fun setupCopyListener(){
-        tv_text_content.setCopyListener { copy ->
-            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("Copied code",copy)
-            clipboard.setPrimaryClip(clip)
-            viewModel.handleCopyCode()
-        }
+    override fun showSearchBar() {
+        bottombar.setSearchState(true)
+        scroll.setMarginOptionally(bottom = dpToIntPx((56)))
+    }
+
+    override fun hideSearchBar() {
+        bottombar.setSearchState(false)
+        scroll.setMarginOptionally(bottom = dpToIntPx((0)))
     }
 
     inner class ArticleBinding() : Binding() {
-        var isFocusedSearch:Boolean = false
-        var searchQuery: String? = null
 
         private var isLoadingContent by ObserveProp(true)
-
         private var isLike : Boolean by RenderProp(false){btn_like.isChecked = it}
         private var isBookmark : Boolean by RenderProp(false){btn_bookmark.isChecked = it}
         private var isShowMenu : Boolean by RenderProp(false){
@@ -208,11 +221,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
                 btn_text_down.isChecked = true
             }
         }
-        private var isDarkMode : Boolean by RenderProp(false,false){
-            switch_mode.isChecked = it
-            delegate.localNightMode = if(it) AppCompatDelegate.MODE_NIGHT_YES
-            else AppCompatDelegate.MODE_NIGHT_NO
-        }
+
 
         var isSearch: Boolean by ObserveProp(false) {
             if (it){
@@ -233,11 +242,19 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
 
         private var searchResults: List<Pair<Int,Int>> by ObserveProp(emptyList())
         private var searchPosition: Int by ObserveProp(0)
-
         private var content: List<MarkdownElement> by ObserveProp(emptyList()){
             tv_text_content.isLoading = it.isEmpty()
             tv_text_content.setContent(it)
             if (it.isNotEmpty()) setupCopyListener()
+        }
+
+        var searchQuery: String? = null
+        var isFocusedSearch: Boolean = false
+
+        private var isDarkMode: Boolean by RenderProp(false, false) {
+            switch_mode.isChecked = it
+            delegate.localNightMode =
+                if (it) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
         }
 
         override fun onFinishInflate() {
@@ -251,9 +268,7 @@ class RootActivity : BaseActivity<ArticleViewModel>(), IArticleView {
                     tv_text_content.renderSearchResult(sr)
                     tv_text_content.renderSearchPosition(sr.getOrNull(sp))
                 }
-                if (!ilc && !iss){
-                    tv_text_content.clearSearchResult()
-                }
+                if (!ilc && !iss) tv_text_content.clearSearchResult()
 
                 bottombar.bindSearchInfo(sr.size, sp)
             }

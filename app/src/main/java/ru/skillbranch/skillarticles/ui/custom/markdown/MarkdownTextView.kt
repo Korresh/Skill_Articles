@@ -22,7 +22,7 @@ class MarkdownTextView constructor(
     mockHelper: SearchBgHelper? = null //for mock
 ) : TextView(context, null, 0), IMarkdownView {
 
-    constructor(context: Context, fontSize: Float) : this(context, fontSize , null)
+    //constructor(context: Context, fontSize: Float) : this(context, fontSize , null)
 
     override var fontSize: Float = fontSize
     set(value) {
@@ -36,19 +36,14 @@ class MarkdownTextView constructor(
     private val color = context.attrValue(R.attr.colorOnBackground)
     private val focusRect = Rect()
 
-    private var searchBgHelper = SearchBgHelper(context) { top, bottom ->
+    private var searchBgHelper = mockHelper ?: SearchBgHelper(context) { top, bottom ->
         focusRect.set(0, top - context.dpToIntPx(56), width, bottom + context.dpToIntPx(56))
         //show rect on view with animation
         requestRectangleOnScreen(focusRect, false)
     }
 
     init {
-        searchBgHelper = mockHelper ?: SearchBgHelper(context){ top, bottom ->
-            focusRect.set(0, top - context.dpToIntPx(56), width, bottom + context.dpToIntPx(56))
-            //show rect on view with animation
-            requestRectangleOnScreen(focusRect, false)
 
-        }
         setTextColor(color)
         textSize = fontSize
         movementMethod = LinkMovementMethod.getInstance()

@@ -3,6 +3,8 @@ package ru.skillbranch.skillarticles.ui.custom.markdown
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
+import android.os.Parcel
+import android.os.Parcelable
 import android.text.Spannable
 import android.view.*
 import android.widget.ImageView
@@ -79,6 +81,8 @@ class MarkdownImageView private constructor(
     init {
         layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         iv_image = ImageView(context).apply {
+            scaleType = ImageView.ScaleType.CENTER_CROP
+            setImageResource(R.drawable.ic_launcher_background)
             outlineProvider = object : ViewOutlineProvider(){
                 override fun getOutline(view: View, outline: Outline) {
                     outline.setRoundRect(
@@ -92,6 +96,7 @@ class MarkdownImageView private constructor(
         addView(iv_image)
 
         tv_title = MarkdownTextView(context, fontSize * 0.75f).apply {
+            setText("title", TextView.BufferType.SPANNABLE)
             setTextColor(colorOnBackground)
             gravity = Gravity.CENTER
             typeface = Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL)
@@ -124,7 +129,7 @@ class MarkdownImageView private constructor(
                 setBackgroundColor(ColorUtils.setAlphaComponent(colorSurface, 160))
                 gravity = Gravity.CENTER
                 textSize = fontSize
-                setPadding(titleTopMargin)
+                setPadding(titleTopMargin,titleTopMargin,titleTopMargin,titleTopMargin)
                 isVisible = false
             }
             addView(tv_alt)
@@ -149,7 +154,7 @@ class MarkdownImageView private constructor(
         iv_image.measure(ms, heightMeasureSpec)
         tv_title.measure(ms, heightMeasureSpec)
         tv_alt?.measure(ms, heightMeasureSpec)
-
+        if(tv_alt!=null) measureChild(tv_alt,widthMeasureSpec, heightMeasureSpec)
         usedHeight += iv_image.measuredHeight
         usedHeight += titleTopMargin
         linePositionY = usedHeight + tv_title.measuredHeight /2f
@@ -234,6 +239,49 @@ class MarkdownImageView private constructor(
         )
         va.doOnEnd { tv_alt?.isVisible = false }
         va.start()
+    }
+    public override fun onSaveInstanceState(): Parcelable {
+        val savedState = SavedState(super.onSaveInstanceState()!!)
+        savedState.isAltVisible = tv_alt?.isVisible ?: false
+        return savedState
+    }
+
+    public override fun onRestoreInstanceState(state: Parcelable) {
+        if (state is SavedState) {
+            super.onRestoreInstanceState(state.superState)
+            if(state.isAltVisible) tv_alt?.isVisible = true
+        } else {
+            super.onRestoreInstanceState(state)
+        }
+    }
+
+
+    internal class SavedState : BaseSavedState {
+
+        var isAltVisible: Boolean = false
+
+        constructor(source: Parcel) : super(source) {
+            isAltVisible = source.readByte().toInt() != 0
+        }
+
+        constructor(superState: Parcelable) : super(superState)
+
+        override fun writeToParcel(out: Parcel, flags: Int) {
+            super.writeToParcel(out, flags)
+            out.writeByte((if (isAltVisible) 1 else 0).toByte())
+        }
+
+        @JvmField
+        val CREATOR: Parcelable.Creator<SavedState> = object : Parcelable.Creator<SavedState> {
+
+            override fun createFromParcel(source: Parcel): SavedState {
+                return SavedState(source)
+            }
+
+            override fun newArray(size: Int): Array<SavedState?> {
+                return arrayOfNulls(size)
+            }
+        }
     }
 }
 

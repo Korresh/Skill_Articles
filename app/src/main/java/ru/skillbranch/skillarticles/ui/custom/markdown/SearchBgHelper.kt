@@ -19,14 +19,11 @@ import ru.skillbranch.skillarticles.ui.custom.spans.SearchSpan
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 class SearchBgHelper(
     context: Context,
-    private val focusListener: ((Int, Int) -> Unit)? = null,
-    mockDrawable : Drawable? = null //for mock drawable
+    //for mock drawable
+    mockDrawable : Drawable? = null,
+    private val focusListener: ((Int, Int) -> Unit)? = null
 ){
-    constructor( context: Context, focusListener: ((Int, Int) -> Unit)) : this(
-        context,
-        focusListener,
-        null
-    )
+
     private val padding:Int = context.dpToIntPx(4)
     private val radius:Float = context.dpToPx(8)
     private val borderWidth:Int = context.dpToIntPx(1)
@@ -37,7 +34,7 @@ class SearchBgHelper(
     private val drawable : Drawable by lazy {
         mockDrawable ?: GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
-            cornerRadii = FloatArray(8).apply { fill(radius,0,size) }
+            cornerRadii = FloatArray(8){radius }
             color = ColorStateList.valueOf(alphaColor)
             setStroke(borderWidth, secondaryColor)
         }
@@ -77,21 +74,11 @@ class SearchBgHelper(
         }
     }
 
-    private lateinit var render: SearchBgRender
-    private val singleLineRender: SearchBgRender = SingleLineRender(padding,drawable)
-    private val multiLineRender: SearchBgRender = MultiLineRender(padding,drawableLeft,drawableMiddle,drawableRight)
-
-    /*private val multiLineRender: SearchBgRender by lazy {
-        MultiLineRender(
-            padding,
-            drawableLeft,
-            drawableMiddle,
-            drawableRight
-        )
-    }*/
-
     private lateinit var spans: Array<out SearchSpan>
     private lateinit var headerSpans: Array<out HeaderSpan>
+    private lateinit var render: SearchBgRender
+    private val singleLineRender: SingleLineRender by lazy{SingleLineRender (padding,drawable)}
+    private val multiLineRender: MultiLineRender by lazy { MultiLineRender(padding,drawableLeft,drawableMiddle,drawableRight)}
 
     private var spanStart = 0
     private var spanEnd = 0
@@ -117,8 +104,6 @@ class SearchBgHelper(
 
             headerSpans = text.getSpans(spanStart , spanEnd, HeaderSpan::class.java)
 
-            topExtraPadding = 0
-            bottomExtraPadding = 0
 
             if (headerSpans.isNotEmpty()){
                 topExtraPadding =
@@ -129,6 +114,9 @@ class SearchBgHelper(
                     if (spanStart in headerSpans[0].lastLineBounds
                         || spanEnd in headerSpans[0].lastLineBounds
                     ) headerSpans[0].bottomExtraPadding else 0
+            } else {
+                topExtraPadding = 0
+                bottomExtraPadding = 0
             }
 
             startOffset = layout.getPrimaryHorizontal(spanStart).toInt()
@@ -188,8 +176,8 @@ class SingleLineRender(
         topExtraPadding: Int,
         bottomExtraPadding: Int
     ) {
-        lineTop = getLineTop(layout, startLine) + topExtraPadding
-        lineBottom = getLineBottom(layout, startLine) - bottomExtraPadding
+        lineTop = layout.getLineTop(startLine) + topExtraPadding
+        lineBottom = layout.getLineBottom(startLine) - bottomExtraPadding
         drawable.setBounds(startOffset - padding, lineTop, endOffset + padding, lineBottom)
         drawable.draw(canvas)
     }
@@ -198,9 +186,9 @@ class SingleLineRender(
 
 class MultiLineRender(
     padding: Int,
-    private val drawableLeft: Drawable,
-    private val drawableMiddle: Drawable,
-    private val drawableRight: Drawable
+    val drawableLeft: Drawable,
+    val drawableMiddle: Drawable,
+    val drawableRight: Drawable
 ) : SearchBgRender(padding){
     private var lineBottom: Int = 0
     private var lineTop: Int = 0
@@ -219,8 +207,8 @@ class MultiLineRender(
     ) {
         //draw first line
         lineEndOffset = (layout.getLineRight(startLine) + padding).toInt()
-        lineTop = getLineTop(layout, startLine) + topExtraPadding
-        lineBottom = getLineBottom(layout, startLine)
+        lineTop = layout.getLineTop(startLine) + topExtraPadding
+        lineBottom = layout.getLineBottom(startLine)
         drawStart(canvas, startOffset - padding, lineTop, lineEndOffset, lineBottom )
 
         //draw middle line
@@ -238,8 +226,8 @@ class MultiLineRender(
 
         //draw last line
         lineStartOffset = (layout.getLineLeft(startLine) - padding).toInt()
-        lineTop = getLineTop(layout, endLine)
-        lineBottom = getLineBottom(layout, endLine) - bottomExtraPadding
+        lineTop = layout.getLineTop(endLine)
+        lineBottom = layout.getLineBottom(endLine) - bottomExtraPadding
         drawEnd(canvas, lineStartOffset, lineTop, endOffset + padding, lineBottom)
     }
     private fun drawStart(
