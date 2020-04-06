@@ -14,7 +14,7 @@ import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.attrValue
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
 
-@SuppressLint("ViewConstructor")
+@SuppressLint("ViewConstructor", "AppCompatCustomView")
 @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
 class MarkdownTextView constructor(
     context: Context,

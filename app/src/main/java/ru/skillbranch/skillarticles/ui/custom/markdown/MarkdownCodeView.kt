@@ -105,7 +105,7 @@ class MarkdownCodeView private constructor(
             addView(tv_codeView)
         }
         addView(sv_scroll)
-1
+
         iv_copy = ImageView(context).apply {
             setImageResource(R.drawable.ic_content_copy_black_24dp)
             imageTintList = ColorStateList.valueOf(textColor)
