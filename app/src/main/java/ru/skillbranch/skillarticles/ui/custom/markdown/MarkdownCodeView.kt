@@ -134,17 +134,18 @@ class MarkdownCodeView private constructor(
         setPadding(padding)
         background = GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
-            cornerRadii = FloatArray(8).apply { radius }
+            cornerRadii = FloatArray(8).apply { fill(radius,0,size) }
             color = ColorStateList.valueOf(bgColor)
         }
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     public override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        var usedHeight = 0
         val width = View.getDefaultSize(suggestedMinimumWidth, widthMeasureSpec)
         measureChild(sv_scroll, widthMeasureSpec, heightMeasureSpec)
-        //measureChild(iv_copy, widthMeasureSpec,heightMeasureSpec)
-        val usedHeight = sv_scroll.measuredHeight +paddingTop + paddingBottom
+        measureChild(iv_copy, widthMeasureSpec,heightMeasureSpec)
+        usedHeight += sv_scroll.measuredHeight +paddingTop + paddingBottom
         setMeasuredDimension(width, usedHeight)
     }
 
@@ -197,7 +198,7 @@ class MarkdownCodeView private constructor(
     }
 
     override fun renderSearchPosition(searchPosition: Pair<Int, Int>, offset: Int) {
-
+        super.renderSearchPosition(searchPosition, offset)
         if ((parent as ViewGroup).hasFocus() && !tv_codeView.hasFocus()) tv_codeView.requestFocus()
         Selection.setSelection(spannableContent,searchPosition.first.minus(offset))
     }

@@ -78,11 +78,14 @@ class MarkdownImageView private constructor(
         strokeWidth = 0f
     }
 
+    private var isOpen = false
+    private var aspectRatio = 0f
+
     init {
         layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         iv_image = ImageView(context).apply {
-            scaleType = ImageView.ScaleType.CENTER_CROP
-            setImageResource(R.drawable.ic_launcher_background)
+            //scaleType = ImageView.ScaleType.CENTER_CROP
+            //setImageResource(R.drawable.ic_launcher_background)
             outlineProvider = object : ViewOutlineProvider(){
                 override fun getOutline(view: View, outline: Outline) {
                     outline.setRoundRect(
@@ -96,7 +99,7 @@ class MarkdownImageView private constructor(
         addView(iv_image)
 
         tv_title = MarkdownTextView(context, fontSize * 0.75f).apply {
-            setText("title", TextView.BufferType.SPANNABLE)
+            //setText("title", TextView.BufferType.SPANNABLE)
             setTextColor(colorOnBackground)
             gravity = Gravity.CENTER
             typeface = Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL)
@@ -117,11 +120,7 @@ class MarkdownImageView private constructor(
 
         tv_title.setText(title, TextView.BufferType.SPANNABLE)
 
-        Glide
-            .with(context)
-            .load(url)
-            .transform(AspectRatioResizeTransform())
-            .into(iv_image)
+
         if (alt != null){
             tv_alt = TextView(context).apply {
                 text = alt
@@ -129,7 +128,7 @@ class MarkdownImageView private constructor(
                 setBackgroundColor(ColorUtils.setAlphaComponent(colorSurface, 160))
                 gravity = Gravity.CENTER
                 textSize = fontSize
-                setPadding(titleTopMargin,titleTopMargin,titleTopMargin,titleTopMargin)
+                setPadding(titleTopMargin)
                 isVisible = false
             }
             addView(tv_alt)
@@ -137,8 +136,18 @@ class MarkdownImageView private constructor(
             iv_image.setOnClickListener{
                 if (tv_alt?.isVisible == true) animateHideAlt()
                 else animateShowAlt()
+                isOpen != isOpen
             }
         }
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        Glide
+            .with(context)
+            .load(imageUrl)
+            .transform(AspectRatioResizeTransform())
+            .into(iv_image)
     }
 
 
@@ -151,10 +160,16 @@ class MarkdownImageView private constructor(
         //all children width == parent width (constraint parent width)
         val ms = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY)
 
-        iv_image.measure(ms, heightMeasureSpec)
+        if (aspectRatio != 0f) {
+            //restore width/height by aspectRatio
+            val hms =
+                MeasureSpec.makeMeasureSpec((width / aspectRatio).toInt(), MeasureSpec.EXACTLY)
+            iv_image.measure(ms,hms)
+        }else iv_image.measure(ms, heightMeasureSpec)
+
         tv_title.measure(ms, heightMeasureSpec)
         tv_alt?.measure(ms, heightMeasureSpec)
-        if(tv_alt!=null) measureChild(tv_alt,widthMeasureSpec, heightMeasureSpec)
+        //if(tv_alt!=null) measureChild(tv_alt,widthMeasureSpec, heightMeasureSpec)
         usedHeight += iv_image.measuredHeight
         usedHeight += titleTopMargin
         linePositionY = usedHeight + tv_title.measuredHeight /2f
@@ -204,7 +219,8 @@ class MarkdownImageView private constructor(
             linePositionY,
             linePaint
         )
-
+        val l = canvas.width - titlePadding.toFloat()
+        val r = canvas.width.toFloat()
         canvas.drawLine(
             canvas.width -titlePadding.toFloat(),
             linePositionY,
