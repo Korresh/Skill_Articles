@@ -1,6 +1,7 @@
 package ru.skillbranch.skillarticles.data.repositories
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import ru.skillbranch.skillarticles.data.*
 
@@ -30,4 +31,6 @@ object ArticleRepository {
     fun updateArticlePersonalInfo(info: ArticlePersonalInfo) {
         local.updateArticlePersonalInfo(info)
     }
+
+    fun isAuth(): MutableLiveData<Boolean> = local.isAuth()
 }

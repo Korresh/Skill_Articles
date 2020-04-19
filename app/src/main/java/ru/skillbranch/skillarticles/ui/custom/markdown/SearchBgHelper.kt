@@ -176,8 +176,8 @@ class SingleLineRender(
         topExtraPadding: Int,
         bottomExtraPadding: Int
     ) {
-        lineTop = layout.getLineTop(startLine) + topExtraPadding
-        lineBottom = layout.getLineBottom(startLine) - bottomExtraPadding
+        lineTop = getLineTop(layout, startLine) + topExtraPadding
+        lineBottom = getLineBottom(layout, startLine) - bottomExtraPadding
         drawable.setBounds(startOffset - padding, lineTop, endOffset + padding, lineBottom)
         drawable.draw(canvas)
     }

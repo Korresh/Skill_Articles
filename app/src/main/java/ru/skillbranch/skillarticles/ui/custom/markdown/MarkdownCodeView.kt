@@ -18,7 +18,11 @@ import androidx.annotation.ColorInt
 import androidx.annotation.VisibleForTesting
 import androidx.core.view.setPadding
 import ru.skillbranch.skillarticles.R
-import ru.skillbranch.skillarticles.extensions.*
+import ru.skillbranch.skillarticles.extensions.attrValue
+import ru.skillbranch.skillarticles.extensions.dpToIntPx
+import ru.skillbranch.skillarticles.extensions.dpToPx
+import ru.skillbranch.skillarticles.extensions.setPaddingOptionally
+
 
 @SuppressLint("ViewConstructor")
 class MarkdownCodeView private constructor(
@@ -134,7 +138,7 @@ class MarkdownCodeView private constructor(
         setPadding(padding)
         background = GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
-            cornerRadii = FloatArray(8).apply { fill(radius,0,size) }
+            cornerRadii = FloatArray(8).apply { fill(radius, 0 , size) }
             color = ColorStateList.valueOf(bgColor)
         }
     }
@@ -215,47 +219,49 @@ class MarkdownCodeView private constructor(
         (background as GradientDrawable).color = ColorStateList.valueOf(bgColor)
         tv_codeView.setTextColor(textColor)
     }
-    public override fun onSaveInstanceState(): Parcelable {
-        val savedState = SavedState(super.onSaveInstanceState()!!)
-        savedState.isManual = isManual
+
+    public override fun onSaveInstanceState(): Parcelable? {
+        val savedState = SavedState(super.onSaveInstanceState())
+        savedState.ssIsManual = isManual
+        savedState.ssIsDark = isDark
         return savedState
     }
 
     public override fun onRestoreInstanceState(state: Parcelable) {
-        if (state is SavedState) {
-            super.onRestoreInstanceState(state.superState)
-            if(state.isManual) toggleColors()
-        } else {
-            super.onRestoreInstanceState(state)
+         super.onRestoreInstanceState(state)
+            if(state is SavedState) {
+                isManual = state.ssIsManual
+                isDark = state.ssIsDark
+                applyColors()
         }
     }
 
 
-    internal class SavedState : BaseSavedState {
+    internal class SavedState : BaseSavedState , Parcelable {
+        var ssIsManual: Boolean = false
+        var ssIsDark: Boolean = false
 
-        var isManual: Boolean = false
+        constructor(superState: Parcelable?) : super(superState)
 
-        constructor(source: Parcel) : super(source) {
-            isManual = source.readByte().toInt() != 0
+        constructor(src: Parcel) : super(src) {
+            //restore state from parcel
+            ssIsManual = src.readInt() == 1
+            ssIsDark = src.readInt() == 1
         }
 
-        constructor(superState: Parcelable) : super(superState)
-
-        override fun writeToParcel(out: Parcel, flags: Int) {
-            super.writeToParcel(out, flags)
-            out.writeByte((if (isManual) 1 else 0).toByte())
+        override fun writeToParcel(dst: Parcel, flags: Int) {
+            //write to parcel
+            super.writeToParcel(dst, flags)
+            dst.writeInt(if (ssIsManual) 1 else 0)
+            dst.writeInt(if(ssIsDark) 1 else 0)
         }
 
-        @JvmField
-        val CREATOR: Parcelable.Creator<SavedState> = object : Parcelable.Creator<SavedState> {
+        override fun describeContents()= 0
 
-            override fun createFromParcel(source: Parcel): SavedState {
-                return SavedState(source)
-            }
+        companion object CREATOR : Parcelable.Creator<SavedState> {
+            override fun createFromParcel(parcel: Parcel) = SavedState(parcel)
+            override fun newArray(size: Int): Array<SavedState?> = arrayOfNulls(size)
 
-            override fun newArray(size: Int): Array<SavedState?> {
-                return arrayOfNulls(size)
-            }
         }
     }
 }
