@@ -137,6 +137,7 @@ class MarkdownImageView private constructor(
             iv_image.setOnClickListener{
                 if (tv_alt?.isVisible == true) animateHideAlt()
                 else animateShowAlt()
+                isOpen = !isOpen
             }
         }
     }

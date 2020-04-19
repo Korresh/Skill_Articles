@@ -47,7 +47,7 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
     }
 
     inner class ArticlesBinding:Binding(){
-        private var articles : List<ArticleItemData> by RenderProp(emptyList()){
+        private var articles : List<ArticleItemData> by RenderProp(emptyList<ArticleItemData>()){
             articlesAdapter.submitList(it)
         }
         override fun bind(data: IViewModelState) {

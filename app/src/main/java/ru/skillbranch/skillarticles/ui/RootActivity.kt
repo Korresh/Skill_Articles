@@ -78,10 +78,9 @@ class RootActivity : BaseActivity<RootViewModel>(){
     override fun subscribeOnState(state: IViewModelState) {
         //TODO Do something with state
     }
-
-
 }
 
 private fun BottomNavigationView.selectDestination(destination: NavDestination) {
-
+    val menuItem = menu.findItem(destination.id)
+    menuItem?.isChecked = true
 }
