@@ -31,6 +31,7 @@ abstract class BaseActivity<T : BaseViewModel<out IViewModelState>> : AppCompatA
     protected abstract val layout:Int
     lateinit var navController : NavController
 
+
     val toolbarBuilder = ToolbarBuilder()
     val bottomBuilder = BottomBarBuilder()
 
