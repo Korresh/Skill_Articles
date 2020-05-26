@@ -8,7 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.skillbranch.skillarticles.data.models.ArticleItemData
 import ru.skillbranch.skillarticles.ui.custom.ArticleItemView
 
-class ArticlesAdapter(private val listener: (ArticleItemData) -> Unit) :
+class ArticlesAdapter(
+    private val listener: (ArticleItemData) -> Unit,
+    private val toggleBookmarkListener: (ArticleItemData) -> Unit
+) :
     PagedListAdapter<ArticleItemData, ArticleVH>(ArticleDiffCallback()){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleVH {
@@ -17,7 +20,7 @@ class ArticlesAdapter(private val listener: (ArticleItemData) -> Unit) :
     }
 
     override fun onBindViewHolder(holder: ArticleVH, position: Int) {
-        holder.bind(getItem(position), listener)
+        holder.bind(getItem(position), listener,toggleBookmarkListener)
     }
 }
 
@@ -30,11 +33,12 @@ class ArticleDiffCallback: DiffUtil.ItemCallback<ArticleItemData>(){
 class ArticleVH(val containerView: View): RecyclerView.ViewHolder(containerView){
     fun bind(
         item: ArticleItemData?,
-        listener: (ArticleItemData) -> Unit
-    ){
+        listener: (ArticleItemData) -> Unit,
+        toggleBookmarkListener:(ArticleItemData) -> Unit
+        ){
         //if use placeholder item me be null
-        (containerView as ArticleItemView).bind(item!!)
-        itemView.setOnClickListener {listener(item!!) }
+        (containerView as ArticleItemView).bind(item!!,toggleBookmarkListener)
+        itemView.setOnClickListener {listener(item) }
 
     }
 

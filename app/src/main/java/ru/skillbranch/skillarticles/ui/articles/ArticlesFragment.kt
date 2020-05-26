@@ -12,11 +12,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_articles.*
 import ru.skillbranch.skillarticles.ui.base.BaseFragment
 import ru.skillbranch.skillarticles.R
+import ru.skillbranch.skillarticles.data.models.ArticleItemData
 import ru.skillbranch.skillarticles.ui.base.Binding
 import ru.skillbranch.skillarticles.ui.base.MenuItemHolder
 import ru.skillbranch.skillarticles.ui.base.ToolbarBuilder
 import ru.skillbranch.skillarticles.ui.delegates.RenderProp
-import ru.skillbranch.skillarticles.viewmodels.articles.ArticleState
+import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesState
 import ru.skillbranch.skillarticles.viewmodels.articles.ArticlesViewModel
 import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.NavigationCommand
@@ -36,8 +37,10 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
         )
     }
 
-    private val articlesAdapter = ArticlesAdapter{ item ->
-        Log.e("ArticlesFragment","click on article : ${item.id} ");
+
+
+    private fun navigateToArticle(item: ArticleItemData){
+        Log.e("ArticlesFragment","click on article : ${item.id} ")
         val action =ArticlesFragmentDirections.actionNavArticlesToPageArticle(
             item.id,
             item.author,
@@ -51,6 +54,15 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
         viewModel.navigate(NavigationCommand.To(action.actionId, action.arguments))
 
     }
+
+    private fun toggleBookmark(item: ArticleItemData){
+        viewModel.handleToggleBookmark(item.id, !item.isBookmark)
+    }
+
+    private val articlesAdapter = ArticlesAdapter (
+        ::navigateToArticle,
+        ::toggleBookmark
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,7 +128,7 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
             //TODO show shimmer on rv_list
         }
         override fun bind(data: IViewModelState) {
-            data as ArticleState
+            data as ArticlesState
             isSearch = data.isSearch
             searchQuery = data.searchQuery
             isLoading = data.isLoading

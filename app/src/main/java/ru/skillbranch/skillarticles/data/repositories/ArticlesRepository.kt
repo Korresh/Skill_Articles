@@ -13,11 +13,24 @@ object ArticlesRepository {
     private val local = LocalDataHolder
     private val network = NetworkDataHolder
 
+    fun updateBookmark(id: String, isChecked: Boolean){
+        val articleDate = local.localArticleItems.find {it.id == id}
+        val articleIndex = local.localArticleItems.indexOf(articleDate)
+        if(articleIndex != -1)
+            local.localArticleItems[articleIndex] = local.localArticleItems[articleIndex].copy(isBookmark = isChecked)
+    }
+
     fun allArticles(): ArticlesDataFactory =
         ArticlesDataFactory(ArticleStrategy.AllArticles(::findArticlesByRange))
 
     fun searchArticles(searchQuery: String) =
         ArticlesDataFactory(ArticleStrategy.SearchArticle(::searchArticlesByTitle,searchQuery))
+
+    fun bookmarksArticles(): ArticlesDataFactory =
+        ArticlesDataFactory(ArticleStrategy.BookmarkArticles(::findBookmarksByRange))
+
+    fun searchBookmarks(searchQuery: String) =
+        ArticlesDataFactory(ArticleStrategy.SearchBookmark(::searchBookmarksByTitle,searchQuery))
 
     private fun findArticlesByRange(start: Int, size: Int) = local.localArticleItems
         .drop(start)
@@ -30,6 +43,19 @@ object ArticlesRepository {
         .take(size)
         .toList()
 
+    private fun findBookmarksByRange(start: Int, size: Int) = local.localArticleItems
+        .filter { it.isBookmark }
+        .drop(start)
+        .take(size)
+
+    private fun searchBookmarksByTitle(start: Int, size: Int, queryTitle: String) =
+        local.localArticleItems
+            .asSequence()
+            .filter { it.isBookmark && it.title.contains(queryTitle, true) }
+            .drop(start)
+            .take(size)
+            .toList()
+
     fun loadArticlesFromNetwork(start: Int, size: Int):List<ArticleItemData> = network.networkArticleItems
             .drop(start)
             .take(size)
@@ -38,12 +64,6 @@ object ArticlesRepository {
     fun insertArticlesToDb(articles: List<ArticleItemData>){
         local.localArticleItems.addAll(articles)
             .apply{sleep(500)}
-    }
-    fun updateBookmark(id: String, isChecked: Boolean){
-        val articleDate = local.localArticleItems.find {it.id == id}
-        val articleIndex = local.localArticleItems.indexOf(articleDate)
-        if(articleIndex != -1)
-            local.localArticleItems[articleIndex] = local.localArticleItems[articleIndex].copy(isBookmark = isChecked)
     }
 
 }
@@ -85,6 +105,20 @@ sealed class ArticleStrategy(){
     ): ArticleStrategy(){
         override fun getItems(start: Int, size: Int): List<ArticleItemData> = itemProvider(start, size, query)
     }
-
     //TODO bookmarks Strategy
+    class BookmarkArticles(
+        private val itemProvider : (Int, Int)-> List<ArticleItemData>
+    ): ArticleStrategy(){
+        override fun getItems(start: Int, size: Int): List<ArticleItemData> = itemProvider(start, size)
+    }
+
+    class SearchBookmark(
+        private val itemProvider: (Int, Int, String) -> List<ArticleItemData>,
+        private val query: String
+    ): ArticleStrategy(){
+        override fun getItems(start: Int, size: Int): List<ArticleItemData> = itemProvider(start, size, query)
+    }
+
+
+
 }

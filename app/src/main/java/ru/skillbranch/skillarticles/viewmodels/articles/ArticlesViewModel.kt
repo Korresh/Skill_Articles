@@ -18,7 +18,7 @@ import java.util.concurrent.Executors
 
 
 class ArticlesViewModel(handle: SavedStateHandle) :
-    BaseViewModel<ArticleState>(handle,ArticleState()) {
+    BaseViewModel<ArticlesState>(handle,ArticlesState()) {
     private val repository = ArticlesRepository
     private val listConfig by lazy {
         PagedList.Config.Builder()
@@ -126,7 +126,7 @@ class ArticlesViewModel(handle: SavedStateHandle) :
 
 
 
-data class ArticleState(
+data class ArticlesState(
     val isSearch:Boolean = false,
     val searchQuery:String? = null,
     val isLoading:Boolean = true

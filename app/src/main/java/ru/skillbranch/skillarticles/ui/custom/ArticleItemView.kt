@@ -263,15 +263,12 @@ class ArticleItemView constructor(
         )
     }
 
-    fun bind(item: ArticleItemData) {
+    fun bind(
+        item: ArticleItemData, toggleBookmarkListener: (ArticleItemData) -> Unit
+    ) {
         date.text = item.date.format()
         author.text = item.author
         title.text = item.title
-        description.text = item.description
-        likesCount.text = "${item.likeCount}"
-        commentsCount.text = "${item.commentCount}"
-        val rd = "${item.readDuration} min read"
-        readDuration.text = rd
 
         Glide.with(context)
             .load(item.poster)
@@ -284,6 +281,14 @@ class ArticleItemView constructor(
             .transform(CenterCrop(), RoundedCorners(cornerRadius))
             .override(categorySize)
             .into(category)
+
+        description.text = item.description
+        likesCount.text = "${item.likeCount}"
+        commentsCount.text = "${item.commentCount}"
+        val rd = "${item.readDuration} min read"
+        readDuration.text = rd
+        bookmark.isChecked = item.isBookmark
+        bookmark.setOnClickListener { toggleBookmarkListener.invoke(item) }
 
     }
 }
