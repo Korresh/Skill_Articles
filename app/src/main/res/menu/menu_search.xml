@@ -8,5 +8,9 @@
         android:title="@string/app_name"
         app:actionLayout="@layout/search_view_layout"
         app:showAsAction="always|collapseActionView"/>
+    <item
+        android:id="@+id/action_filter"
+        android:icon="@drawable/ic_filter_list_black_24dp"
+        android:title="@string/app_name"/>
 </menu>
 

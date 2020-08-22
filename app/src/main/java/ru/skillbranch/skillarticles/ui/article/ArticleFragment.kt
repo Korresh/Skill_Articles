@@ -115,7 +115,7 @@ class ArticleFragment : BaseFragment<ArticleViewModel>(), IArticleView {
 
         et_comment.setOnEditorActionListener{view , _, _->
             root.hideKeyboard(view)
-            viewModel.handleSetComment(view.text.toString())
+            viewModel.handleSendComment(view.text.toString())
             view.text = null
             view.clearFocus()
             true

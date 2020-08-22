@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import ru.skillbranch.skillarticles.R
+import ru.skillbranch.skillarticles.data.local.entities.ArticleItem
 import ru.skillbranch.skillarticles.data.models.ArticleItemData
 import ru.skillbranch.skillarticles.extensions.attrValue
 import ru.skillbranch.skillarticles.extensions.dpToIntPx
@@ -264,7 +265,7 @@ class ArticleItemView constructor(
     }
 
     fun bind(
-        item: ArticleItemData, toggleBookmarkListener: (ArticleItemData) -> Unit
+        item: ArticleItem, toggleBookmarkListener: (ArticleItem, Boolean) -> Unit
     ) {
         date.text = item.date.format()
         author.text = item.author
@@ -288,7 +289,7 @@ class ArticleItemView constructor(
         val rd = "${item.readDuration} min read"
         readDuration.text = rd
         bookmark.isChecked = item.isBookmark
-        bookmark.setOnClickListener { toggleBookmarkListener.invoke(item) }
+        bookmark.setOnClickListener { toggleBookmarkListener.invoke(item, false) }
 
     }
 }

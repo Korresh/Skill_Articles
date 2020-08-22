@@ -20,7 +20,7 @@ class MarkdownTextView constructor(
     context: Context,
     fontSize: Float,
     mockHelper: SearchBgHelper? = null //for mock
-): TextView(context, null, 0), IMarkdownView {
+): androidx.appcompat.widget.AppCompatTextView(context, null, 0), IMarkdownView {
 
     constructor(context: Context, fontSize: Float) : this(context, fontSize , null)
 
