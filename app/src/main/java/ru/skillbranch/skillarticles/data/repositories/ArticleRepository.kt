@@ -10,7 +10,7 @@ import ru.skillbranch.skillarticles.data.local.DbManager.db
 import ru.skillbranch.skillarticles.data.local.PrefManager
 import ru.skillbranch.skillarticles.data.local.dao.ArticleContentsDao
 import ru.skillbranch.skillarticles.data.local.dao.ArticlePersonalInfosDao
-import ru.skillbranch.skillarticles.data.local.dao.ArticlesCountsDao
+import ru.skillbranch.skillarticles.data.local.dao.ArticleCountsDao
 import ru.skillbranch.skillarticles.data.local.dao.ArticlesDao
 import ru.skillbranch.skillarticles.data.local.entities.ArticleFull
 import ru.skillbranch.skillarticles.data.models.*
@@ -46,7 +46,7 @@ object ArticleRepository : IArticleRepository {
     fun setupTestDao(
         articlesDao: ArticlesDao,
         articlePersonalDao: ArticlePersonalInfosDao,
-        articleCountsDao: ArticlesCountsDao,
+        articleCountsDao: ArticleCountsDao,
         articleContentDao: ArticleContentsDao
     ){
         this.articlesDao = articlesDao

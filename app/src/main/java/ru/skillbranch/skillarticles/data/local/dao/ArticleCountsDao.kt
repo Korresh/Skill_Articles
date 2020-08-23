@@ -6,7 +6,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import ru.skillbranch.skillarticles.data.local.entities.ArticleCounts
 @Dao
-interface ArticlesCountsDao : BaseDao<ArticleCounts> {
+interface ArticleCountsDao : BaseDao<ArticleCounts> {
     @Transaction
     fun upsert(list: List<ArticleCounts>){
         insert(list)

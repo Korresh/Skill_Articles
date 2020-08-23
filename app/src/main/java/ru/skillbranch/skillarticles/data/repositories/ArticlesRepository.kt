@@ -38,7 +38,7 @@ object ArticlesRepository : IArticlesRepository{
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     fun setupTestDao(
         articlesDao: ArticlesDao,
-        articleCountsDao: ArticlesCountsDao,
+        articleCountsDao: ArticleCountsDao,
         categoriesDao: CategoriesDao,
         tagsDao: TagsDao,
         articlePersonalDao: ArticlePersonalInfosDao
