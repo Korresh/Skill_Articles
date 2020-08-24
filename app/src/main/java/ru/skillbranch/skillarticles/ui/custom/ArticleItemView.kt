@@ -288,7 +288,7 @@ class ArticleItemView constructor(
         val rd = "${item.readDuration} min read"
         readDuration.text = rd
         bookmark.isChecked = item.isBookmark
-        bookmark.setOnClickListener { toggleBookmarkListener.invoke(item, false) }
-
+        bookmark.setOnClickListener { toggleBookmarkListener.invoke(item, true) }
+        this.setOnClickListener { toggleBookmarkListener.invoke(item, false) }
     }
 }
