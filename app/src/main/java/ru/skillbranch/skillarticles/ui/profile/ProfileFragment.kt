@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.viewmodels.profile.ProfileViewModel
 
+
 class ProfileFragment : Fragment() {
 
     companion object {
