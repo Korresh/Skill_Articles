@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.distinctUntilChanged
 import androidx.preference.PreferenceManager
 import ru.skillbranch.skillarticles.App
