@@ -9,7 +9,7 @@ import androidx.lifecycle.distinctUntilChanged
 import androidx.preference.PreferenceManager
 import ru.skillbranch.skillarticles.App
 import ru.skillbranch.skillarticles.data.delegates.PrefDelegate
-import ru.skillbranch.skillarticles.data.delegates.PrefLiveDelegate
+//import ru.skillbranch.skillarticles.data.delegates.PrefLiveDelegate
 import ru.skillbranch.skillarticles.data.models.AppSettings
 
 
