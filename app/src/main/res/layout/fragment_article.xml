@@ -78,6 +78,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_author_avatar"
             tools:src="@drawable/ic_launcher_background" />
+
         <ru.skillbranch.skillarticles.ui.custom.markdown.MarkdownContentView
             android:id="@+id/tv_text_content"
             android:layout_width="match_parent"
@@ -99,7 +100,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_text_content"/>
-
         <TextView
             android:id="@+id/tv_source"
             android:layout_width="0dp"
@@ -110,6 +110,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_hashtags"/>
+
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/wrap_comments"
@@ -124,7 +125,7 @@
             android:padding="16dp"
             style="@style/Base.Widget.MaterialComponents.TextInputLayout"
             android:theme="@style/TextInputLayoutAppearance"
-            app:layout_constraintTop_toBottomOf="@id/tv_text_content"
+            app:layout_constraintTop_toBottomOf="@id/tv_source"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:background="?attr/colorSurface">
@@ -135,7 +136,7 @@
                 android:layout_height="wrap_content"
                 android:imeOptions="actionSend"
                 android:inputType="text"
-                tools:text="comment text"/>
+                tools:text="comment text" />
         </com.google.android.material.textfield.TextInputLayout>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_comments"
