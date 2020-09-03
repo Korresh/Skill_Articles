@@ -83,7 +83,7 @@ object ArticleRepository : IArticleRepository {
         return articleCountsDao.getCommentsCount(articleId)
     }
 
-    override fun isAuth(): LiveData<Boolean> = preferences.isAuth()
+    override fun isAuth(): LiveData<Boolean> = preferences.isAuthLive
 
     override fun loadAllComments(articleId: String, totalCount: Int) =
         CommentsDataFactory(
