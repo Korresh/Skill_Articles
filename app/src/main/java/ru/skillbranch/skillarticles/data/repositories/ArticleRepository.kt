@@ -27,7 +27,7 @@ interface IArticleRepository{
     fun updateSettings(appSettings: AppSettings)
 
     suspend fun toggleLike(articleId: String) : Boolean
-    suspend fun toggleBookmark(articleId: String)
+    suspend fun toggleBookmark(articleId: String) : Boolean
     suspend fun decrementLike(articleId: String)
     suspend fun incrementLike(articleId: String)
     suspend fun sendMessage(articleId: String, message: String, answerToMessageId: String?)
@@ -68,8 +68,8 @@ object ArticleRepository : IArticleRepository {
         return articlePersonalDao.toggleLikeOrInsert(articleId)
     }
 
-    override suspend fun toggleBookmark(articleId: String) {
-        articlePersonalDao.toggleBookmarkOrInsert(articleId)
+    override suspend fun toggleBookmark(articleId: String) : Boolean {
+        return articlePersonalDao.toggleBookmarkOrInsert(articleId)
     }
 
     override fun updateSettings(appSettings: AppSettings) {
@@ -141,32 +141,22 @@ object ArticleRepository : IArticleRepository {
         articleCountsDao.updateCommentsCount(articleId,counts.comments)
     }
 
-    suspend fun addBookmark(articleId: String) {
-        articlePersonalDao.addBookmark(articleId)
-        if(preferences.accessToken.isEmpty()) {
-            return
-        }
-
-        try {
+     suspend fun addBookmark(articleId: String)  {
+        if(preferences.accessToken.isEmpty()) return
+        try{
             network.addBookmark(articleId, preferences.accessToken)
-        } catch (e: NoNetworkError) {
-            return
-        } catch (e: Throwable) {
+        }catch (e: Throwable){
+            if (e is NoNetworkError) return
             throw e
         }
     }
 
     suspend fun removeBookmark(articleId: String) {
-        articlePersonalDao.removeBookmark(articleId)
-        if(preferences.accessToken.isEmpty()) {
-            return
-        }
-
+        if(preferences.accessToken.isEmpty()) return
         try {
             network.removeBookmark(articleId, preferences.accessToken)
-        } catch (e: NoNetworkError) {
-            return
         } catch (e: Throwable) {
+            if (e is NoNetworkError) return
             throw e
         }
     }
