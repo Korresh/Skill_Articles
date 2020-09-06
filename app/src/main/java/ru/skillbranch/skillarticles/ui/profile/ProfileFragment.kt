@@ -1,34 +1,58 @@
 package ru.skillbranch.skillarticles.ui.profile
 
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-
+import androidx.fragment.app.viewModels
+import kotlinx.android.synthetic.main.fragment_profile.*
 import ru.skillbranch.skillarticles.R
+import ru.skillbranch.skillarticles.ui.base.BaseFragment
+import ru.skillbranch.skillarticles.ui.base.Binding
+import ru.skillbranch.skillarticles.ui.delegates.RenderProp
+import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
+import ru.skillbranch.skillarticles.viewmodels.profile.ProfileState
 import ru.skillbranch.skillarticles.viewmodels.profile.ProfileViewModel
 
 
-class ProfileFragment : Fragment() {
+class ProfileFragment : BaseFragment<ProfileViewModel>() {
 
-    companion object {
-        fun newInstance() = ProfileFragment()
+    override val viewModel: ProfileViewModel by viewModels()
+    override val layout: Int = R.layout.fragment_profile
+    override val binding: ProfileBinding by lazy { ProfileBinding() }
+
+
+    override fun setupViews() {
+        TODO("Not yet implemented")
     }
 
-    private lateinit var viewModel: ProfileViewModel
+    private fun updateAvatar(avatarUrl:String){
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        //viewModel = ViewModelProviders.of(this).get(ProfileViewModel::class.java)
-        // TODO: Use the ViewModel
-    }
+    inner class ProfileBinding: Binding(){
+        var avatar by RenderProp("") {
+            updateAvatar(it)
+        }
+        var name by RenderProp(""){
+            tv_name.text = it
+        }
 
+        var about by RenderProp(""){
+            tv_about.text = it
+        }
+
+        var rating by RenderProp(0){
+            tv_rating.text = "Rating: $it"
+        }
+
+        var respect by RenderProp(0){
+            tv_respect.text = "Rating: $it"
+        }
+
+        override fun bind(data: IViewModelState) {
+            data as ProfileState
+            if (data.avatar != null) avatar = data.avatar
+            if (data.name != null) name = data.name
+            if (data.about != null) about = data.about
+            rating = data.rating
+            respect = data.respect
+        }
+    }
 }
