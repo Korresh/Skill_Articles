@@ -47,8 +47,12 @@ interface ArticlePersonalInfosDao : BaseDao<ArticlePersonalInfo> {
     """)
 
     @Transaction
-    suspend fun toggleLikeOrInsert(articleId:String){
-        if (toggleLike(articleId)==0) insert(ArticlePersonalInfo(articleId = articleId, isLike = true))
+    suspend fun toggleLikeOrInsert(articleId:String): Boolean{
+        if (toggleLike(articleId)==0) {
+            insert(ArticlePersonalInfo(articleId = articleId, isLike = true))
+            return true
+        }
+        return false
     }
 
     @Query("""SELECT * FROM article_personal_infos""")

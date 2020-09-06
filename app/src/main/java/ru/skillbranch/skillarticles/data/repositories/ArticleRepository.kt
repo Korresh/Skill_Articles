@@ -24,9 +24,9 @@ interface IArticleRepository{
     fun findArticle(articleId: String): LiveData<ArticleFull>
     fun getAppSettings(): LiveData<AppSettings>
     fun isAuth(): LiveData<Boolean>
-    fun updateSettings(copy: AppSettings)
+    fun updateSettings(appSettings: AppSettings)
 
-    suspend fun toggleLike(articleId: String)
+    suspend fun toggleLike(articleId: String) : Boolean
     suspend fun toggleBookmark(articleId: String)
     suspend fun decrementLike(articleId: String)
     suspend fun incrementLike(articleId: String)
@@ -64,8 +64,8 @@ object ArticleRepository : IArticleRepository {
 
     override fun getAppSettings(): LiveData<AppSettings> = preferences.getAppSettings() //from preferences
 
-    override suspend fun toggleLike(articleId: String) {
-        articlePersonalDao.toggleLikeOrInsert(articleId)
+    override suspend fun toggleLike(articleId: String) : Boolean {
+        return articlePersonalDao.toggleLikeOrInsert(articleId)
     }
 
     override suspend fun toggleBookmark(articleId: String) {
