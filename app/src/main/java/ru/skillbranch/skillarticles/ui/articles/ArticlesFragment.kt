@@ -144,12 +144,12 @@ class ArticlesFragment : BaseFragment<ArticlesViewModel>() {
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
-                viewModel.handlesearch(query)
+                viewModel.handleSearch(query)
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                viewModel.handlesearch(newText)
+                viewModel.handleSearch(newText)
                 return true
             }
         })

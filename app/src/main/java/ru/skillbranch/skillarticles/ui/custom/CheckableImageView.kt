@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.View
 import android.widget.Checkable
-import android.widget.ImageView
 
 class CheckableImageView @JvmOverloads constructor(
     context: Context,

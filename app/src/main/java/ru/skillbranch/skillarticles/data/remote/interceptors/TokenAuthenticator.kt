@@ -13,8 +13,8 @@ class TokenAuthenticator : Authenticator {
     private val prefs = PrefManager
     private val api by lazy { NetworkManager.api }
 
-    override fun authenticate(route: Route?, responce: Response): Request? {
-        return if (responce.code != 401) null
+    override fun authenticate(route: Route?, response: Response): Request? {
+        return if (response.code != 401) null
         else {
             //request new access token by refresh token (sync)
             val res = api.refreshAccessToken(RefreshReq(prefs.refreshToken)).execute()
@@ -27,7 +27,7 @@ class TokenAuthenticator : Authenticator {
                 prefs.refreshToken = res.body()!!.refreshToken
 
                 //retry request with new access token
-                responce.request.newBuilder()
+                response.request.newBuilder()
                     .header("Authorization", "Bearer $newAccessToken ")
                     .build()
             }

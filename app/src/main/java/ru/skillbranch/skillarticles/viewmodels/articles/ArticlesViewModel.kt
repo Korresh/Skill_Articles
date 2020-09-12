@@ -109,7 +109,7 @@ class ArticlesViewModel(handle: SavedStateHandle) :
     }
 
 
-    fun handlesearch(query: String?) {
+    fun handleSearch(query: String?) {
         query ?: return
         updateState { it.copy(searchQuery = query, isHashtagSearch = query.startsWith("#", true)) }
     }

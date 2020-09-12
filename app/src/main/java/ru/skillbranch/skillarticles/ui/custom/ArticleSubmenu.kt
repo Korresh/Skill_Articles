@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Parcel
 import android.os.Parcelable
 import android.util.AttributeSet
-import android.view.SubMenu
 import android.view.View
 import android.view.ViewAnimationUtils
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -12,7 +11,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import com.google.android.material.shape.MaterialShapeDrawable
-import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.extensions.dpToPx
 import ru.skillbranch.skillarticles.ui.custom.behaviors.SubmenuBehavior
 import kotlin.math.hypot

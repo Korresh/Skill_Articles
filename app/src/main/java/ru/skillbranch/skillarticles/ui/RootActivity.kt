@@ -5,11 +5,9 @@ import androidx.activity.viewModels
 import androidx.navigation.NavDestination
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_root.*
-import kotlinx.android.synthetic.main.layout_bottombar.*
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.ui.base.BaseActivity
 import ru.skillbranch.skillarticles.ui.custom.Bottombar
@@ -19,7 +17,6 @@ import ru.skillbranch.skillarticles.viewmodels.base.NavigationCommand
 import ru.skillbranch.skillarticles.viewmodels.base.Notify
 
 
-
 class RootActivity : BaseActivity<RootViewModel>(){
     override val layout: Int = R.layout.activity_root
     public override val viewModel: RootViewModel by viewModels ()
@@ -27,7 +24,7 @@ class RootActivity : BaseActivity<RootViewModel>(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //top level destination
-        val appBarConfiguration: AppBarConfiguration = AppBarConfiguration(
+        val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.nav_articles,
                 R.id.nav_bookmarks,

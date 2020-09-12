@@ -3,7 +3,6 @@ package ru.skillbranch.skillarticles.ui.auth
 import android.text.Spannable
 import androidx.core.text.set
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_auth.*
 import ru.skillbranch.skillarticles.R

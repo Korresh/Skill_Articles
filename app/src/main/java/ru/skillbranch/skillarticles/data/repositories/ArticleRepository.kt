@@ -99,15 +99,18 @@ object ArticleRepository : IArticleRepository {
     override suspend fun decrementLike(articleId: String){
         //check auth locally
         if (preferences.accessToken.isEmpty()){
-        articleCountsDao.decrementLike(articleId)
-        return
-    }
+            articleCountsDao.decrementLike(articleId)
+            return
+        }
 
         try {
             val res = network.decrementLike(articleId, preferences.accessToken)
             articleCountsDao.updateLike(articleId,res.likeCount)
         }catch (e: Throwable) {
-            articleCountsDao.decrementLike(articleId)
+            if(e is NoNetworkError) {
+                articleCountsDao.decrementLike(articleId)
+                return
+            }
             throw e
         }
     }
@@ -121,7 +124,10 @@ object ArticleRepository : IArticleRepository {
             val res = network.incrementLike(articleId, preferences.accessToken)
             articleCountsDao.updateLike(articleId,res.likeCount)
         }catch (e: Throwable) {
+            if (e is NoNetworkError){
             articleCountsDao.incrementLike(articleId)
+            return
+            }
             throw e
         }
     }

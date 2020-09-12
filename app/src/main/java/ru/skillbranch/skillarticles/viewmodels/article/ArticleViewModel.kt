@@ -6,7 +6,6 @@ import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import ru.skillbranch.skillarticles.data.remote.res.CommentRes
 import ru.skillbranch.skillarticles.data.repositories.ArticleRepository
 import ru.skillbranch.skillarticles.data.repositories.CommentsDataFactory
@@ -15,7 +14,10 @@ import ru.skillbranch.skillarticles.data.repositories.clearContent
 import ru.skillbranch.skillarticles.extensions.data.toAppSettings
 import ru.skillbranch.skillarticles.extensions.indexesOf
 import ru.skillbranch.skillarticles.extensions.shortFormat
-import ru.skillbranch.skillarticles.viewmodels.base.*
+import ru.skillbranch.skillarticles.viewmodels.base.BaseViewModel
+import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
+import ru.skillbranch.skillarticles.viewmodels.base.NavigationCommand
+import ru.skillbranch.skillarticles.viewmodels.base.Notify
 import java.util.concurrent.Executors
 
 class ArticleViewModel(
@@ -121,9 +123,8 @@ class ArticleViewModel(
             else{
                 Notify.ActionMessage(
                     "Don t like anymore",//
-                    "No, still like it", //action label on snackbar
+                    "No, still like it") //action label on snackbar
                 {handleLike()}//handle function, if press "No, still like it" on snackbar, then toggle again
-                )
             }
             notify(msg)
         }
@@ -221,7 +222,7 @@ class ArticleViewModel(
     }
 
     fun handleReplyTo(messageId:String, name:String){
-        updateState { it.copy(answerToMessageId = messageId, answerTo = "Reply to ${name}") }
+        updateState { it.copy(answerToMessageId = messageId, answerTo = "Reply to $name") }
     }
 
 }

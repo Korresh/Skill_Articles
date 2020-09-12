@@ -38,7 +38,7 @@ data class Author(
         FROM articles AS article
         INNER JOIN article_counts AS counts ON counts.article_id = id
         INNER JOIN article_categories AS category ON category.category_id = article.category_id
-        LEFT JOIN article_personal_infos AS personal ON personal.article_id = id
+        LEFT JOIN article_personal_info AS personal ON personal.article_id = id
     """
 )
 data class ArticleItem(
@@ -72,7 +72,7 @@ data class ArticleItem(
         content.share_link AS share_link, content.content AS content,
         personal.is_bookmark AS is_bookmark, personal.is_like AS is_like, GROUP_CONCAT(refs.t_id) as tags, source
         FROM articles AS article
-        LEFT JOIN article_personal_infos AS personal ON personal.article_id = id
+        LEFT JOIN article_personal_info AS personal ON personal.article_id = id
         LEFT JOIN article_contents AS content ON content.article_id = id
         LEFT JOIN article_categories AS category ON category.category_id = article.category_id
         LEFT JOIN article_tag_x_ref AS refs ON id = refs.a_id
