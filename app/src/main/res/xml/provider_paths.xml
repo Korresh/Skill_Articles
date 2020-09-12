@@ -3,4 +3,7 @@
     <external-path
         name="external_files"
         path="."/>
+    <cache-path
+        name="share"
+        path="image_manager_disk_cache"/>
 </paths>

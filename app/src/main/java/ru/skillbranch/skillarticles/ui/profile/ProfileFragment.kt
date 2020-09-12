@@ -8,9 +8,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.fragment_profile.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.skillbranch.skillarticles.R
 import ru.skillbranch.skillarticles.ui.base.BaseFragment
 import ru.skillbranch.skillarticles.ui.base.Binding
@@ -67,10 +71,34 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
             }
     }
 
+    private val editPhotoResultCallback =
+        registerForActivityResult(EditImageContract()){result ->
+            if (result != null){
+                val inputStream = requireContext().contentResolver.openInputStream(result)
+                viewModel.handleUploadPhoto(inputStream)
+            }else{
+                // else remove temp uri
+                val(payload) = binding.pendingAction as PendingAction.EditAction
+                removeTempUri(payload.second)
+            }
+    }
+
     override fun setupViews() {
         iv_avatar.setOnClickListener {
-            val uri = prepareTempUri()
-            viewModel.handleTestAction(uri)
+            lifecycleScope.launch(Dispatchers.IO) {
+                //Glide submit get it is sync call, don`t call on UI thread
+                val sourceFile = Glide.with(requireActivity()).asFile().load(binding.avatar).submit().get()
+                val sourceUri = FileProvider.getUriForFile(
+                    requireContext(),
+                    "${requireContext().packageName}.provider",
+                    sourceFile
+                )
+                val uri = prepareTempUri()
+                Log.e("ProfileFragment", "edit image: glide cache uri: ${sourceFile.toUri()} content sourceUri: $sourceUri");
+                withContext(Dispatchers.Main){
+                    viewModel.handleTestAction(sourceUri, uri)
+                }
+            }
         }
         viewModel.oservePermissions(viewLifecycleOwner){
             // launch callback for request permissions
@@ -81,6 +109,7 @@ class ProfileFragment : BaseFragment<ProfileViewModel>() {
                 is PendingAction.GalleryAction -> galleryResultCallback.launch(it.payload)
                 is PendingAction.SettingsAction -> settingResultCallback.launch(it.payload)
                 is PendingAction.CameraAction -> cameraResultCallback.launch(it.payload)
+                is PendingAction.EditAction -> editPhotoResultCallback.launch(it.payload)
             }
         }
     }

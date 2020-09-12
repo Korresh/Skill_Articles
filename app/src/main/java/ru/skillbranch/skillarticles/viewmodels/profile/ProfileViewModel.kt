@@ -3,6 +3,7 @@ package ru.skillbranch.skillarticles.viewmodels.profile
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.content.Intent
 import android.net.Uri
+import android.os.Parcel
 import android.os.Parcelable
 import android.provider.Settings
 import androidx.lifecycle.LifecycleOwner
@@ -13,7 +14,6 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.internal.notify
 import ru.skillbranch.skillarticles.data.repositories.ProfileRepository
 import ru.skillbranch.skillarticles.viewmodels.base.*
 import java.io.InputStream
@@ -44,8 +44,8 @@ class ProfileViewModel(handle: SavedStateHandle) :
         activityResults.value = Event(action)
     }
 
-    fun handleTestAction(uri: Uri){
-        val pendingAction = PendingAction.CameraAction(uri)
+    fun handleTestAction(source: Uri, destination: Uri){
+        val pendingAction = PendingAction.EditAction(source to destination)
         updateState { it.copy(pendingAction = pendingAction) }
         requestPermissions(storagePermissions)
     }
@@ -129,4 +129,28 @@ sealed class PendingAction(): Parcelable{
     data class SettingsAction(override val payload: Intent) : PendingAction()
     @Parcelize
     data class CameraAction (override val payload: Uri) : PendingAction()
+
+    data class EditAction(override val payload: Pair<Uri,Uri>) : PendingAction(), Parcelable {
+        constructor(parcel: Parcel) : this(Uri.parse(parcel.readString()) to Uri.parse(parcel.readString()))
+
+        override fun writeToParcel(parcel: Parcel, flags: Int) {
+            parcel.writeString(payload.first.toString())
+            parcel.writeString(payload.second.toString())
+        }
+
+        override fun describeContents(): Int {
+            return 0
+        }
+
+        companion object CREATOR : Parcelable.Creator<EditAction> {
+            override fun createFromParcel(parcel: Parcel): EditAction {
+                return EditAction(parcel)
+            }
+
+            override fun newArray(size: Int): Array<EditAction?> {
+                return arrayOfNulls(size)
+            }
+        }
+
+    }
 }
