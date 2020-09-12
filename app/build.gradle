@@ -7,7 +7,7 @@ apply from: "../versions.gradle"
 
 android {
     compileSdkVersion 29
-    buildToolsVersion '29.0.2'
+    buildToolsVersion '29.0.3'
     defaultConfig {
         applicationId "ru.skillbranch.skillarticles"
         minSdkVersion 23
@@ -82,6 +82,10 @@ dependencies {
     implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
     kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
     implementation "com.squareup.okhttp3:mockwebserver:$okhttp_version"
+
+    //activity /fragment result api
+    implementation "androidx.activity:activity-ktx:$activity_ktx_version"
+    implementation "androidx.fragment:fragment-ktx:$fragment_ktx_version"
 
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 

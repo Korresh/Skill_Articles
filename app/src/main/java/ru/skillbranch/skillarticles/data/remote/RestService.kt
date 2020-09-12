@@ -1,5 +1,6 @@
 package ru.skillbranch.skillarticles.data.remote
 
+import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.*
 import ru.skillbranch.skillarticles.data.remote.req.LoginReq
@@ -59,12 +60,14 @@ interface RestService {
         @Header("Authorization") accessToken: String
     ): LikeRes
 
+    // https://skill-articles.skill-branch.ru/api/v1/articles/{articleId}/addBookmark
     @POST("articles/{article}/addBookmark")
     suspend fun addBookmark(
         @Path("article") articleId: String,
         @Header("Authorization") token: String
     ): BookmarkRes
 
+    // https://skill-articles.skill-branch.ru/api/v1/articles/{articleId}/removeBookmark
     @POST("articles/{article}/removeBookmark")
     suspend fun removeBookmark(
         @Path("article") articleId: String,
@@ -76,6 +79,14 @@ interface RestService {
     fun refreshAccessToken(
         @Body refreshToken: RefreshReq
     ): Call<RefreshRes>
+
+    //https://skill-articles.skill-branch.ru/api/v1/profile/avatar/upload
+    @Multipart
+    @POST("profile/avatar/upload")
+    suspend fun upload(
+        @Part file: MultipartBody.Part?,
+        @Header("Authorization") token: String
+    ): UploadRes
 }
 
 

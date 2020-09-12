@@ -53,4 +53,8 @@ object PrefManager {
     fun clearAll() {
         preferences.edit().clear().apply()
     }
+
+    fun replaceAvatarUrl(url: String) {
+        profile = profile!!.copy(avatar = url)
+    }
 }

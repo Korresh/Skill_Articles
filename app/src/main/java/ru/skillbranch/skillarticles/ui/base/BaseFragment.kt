@@ -36,6 +36,20 @@ abstract class BaseFragment<T : BaseViewModel<out IViewModelState>> : Fragment()
         //restore state
         viewModel.restoreState()
         binding?.restoreUi(savedInstanceState)
+
+        //owner it is view
+        viewModel.observeState(viewLifecycleOwner){ binding?.bind(it) }
+        //bind default values if viewmodel not loaded data
+        if (binding?.isInflated == false) binding?.onFinishInflate()
+
+        viewModel.observeNotifications(viewLifecycleOwner){ root.renderNotification(it) }
+        viewModel.observeNavigation(viewLifecycleOwner){ root.viewModel.navigate(it) }
+        viewModel.observeLoading(viewLifecycleOwner){ renderLoading(it) }
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+
         //prepare toolbar
         root.toolbarBuilder
             .invalidate()
@@ -46,19 +60,7 @@ abstract class BaseFragment<T : BaseViewModel<out IViewModelState>> : Fragment()
             .invalidate()
             .prepare(prepareBottombar)
             .build(root)
-        //owner it is view
-        viewModel.observeState(viewLifecycleOwner){ binding?.bind(it) }
-        //bind default values if viewmodel not loaded data
-        if (binding?.isInflated == false) binding?.onFinishInflate()
-
-        viewModel.observeNotifications(viewLifecycleOwner){ root.renderNotification(it) }
-        viewModel.observeNavigation(viewLifecycleOwner){ root.viewModel.navigate(it) }
-        viewModel.observeLoading(viewLifecycleOwner){ renderLoading(it) }
         setupViews()
-    }
-
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
         binding?.rebind()
     }
 
