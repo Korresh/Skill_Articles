@@ -10,6 +10,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import kotlinx.android.parcel.Parcelize
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -89,9 +91,9 @@ class ProfileViewModel(handle: SavedStateHandle) :
     fun handleUploadPhoto(inputStream: InputStream?) {
         inputStream ?: return //or show error notification
 
-        val byteArray = inputStream.use { input -> input.readBytes() }
-
-        launchSafety {
+        launchSafety(null,{updateState { it.copy(pendingAction = null) }}) {
+            //read file stream om backgroung thread (IO)
+            val byteArray = withContext(Dispatchers.IO){inputStream.use { input -> input.readBytes() }}
             val reqFile : RequestBody = byteArray.toRequestBody("image/jpeg".toMediaType())
             val body : MultipartBody.Part = MultipartBody.Part.createFormData("avatar", "name.jpg", reqFile)
 
@@ -101,6 +103,27 @@ class ProfileViewModel(handle: SavedStateHandle) :
 
     fun observeActivityResults(owner: LifecycleOwner, handle: (action: PendingAction) -> Unit) {
         activityResults.observe(owner, EventObserver{handle(it)})
+    }
+
+    fun handleEditAction(source: Uri, destination: Uri) {
+        updateState { it.copy(pendingAction = PendingAction.EditAction(source to destination)) }
+        requestPermissions(storagePermissions)
+    }
+
+
+    fun handleCameraAction(destination: Uri) {
+        updateState { it.copy(pendingAction = PendingAction.CameraAction(destination)) }
+        requestPermissions(storagePermissions)
+    }
+
+    fun handleGalleryAction() {
+        updateState { it.copy(pendingAction = PendingAction.GalleryAction("image/jpeg")) }
+        requestPermissions(storagePermissions)
+    }
+
+    fun handleDeleteAction() {
+        TODO("Not yet implemented")
+        // use repository method
     }
 }
 

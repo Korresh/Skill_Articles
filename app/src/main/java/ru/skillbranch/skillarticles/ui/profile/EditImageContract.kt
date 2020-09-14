@@ -19,16 +19,16 @@ class EditImageContract : ActivityResultContract<Pair<Uri, Uri>, Uri>(){
             putExtra("return-value", true)
         }
 
-
+        // scan all application on device for resolve this intent action (action Intent.ACTION_EDIT)
         val resolveInfoList = context.packageManager
             .queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
             .map{ info -> info.activityInfo.packageName }
 
         resolveInfoList.forEach {resolvePackage ->
             context.grantUriPermission(
-                resolvePackage,
-                input!!.second,
-                Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                resolvePackage, //for package
+                input!!.second, //for destination uri
+                Intent.FLAG_GRANT_WRITE_URI_PERMISSION //grant permission for write to destination Uri
             )
         }
 
