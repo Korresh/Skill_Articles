@@ -5,7 +5,7 @@ import okhttp3.MultipartBody
 import ru.skillbranch.skillarticles.data.local.PrefManager
 import ru.skillbranch.skillarticles.data.models.User
 import ru.skillbranch.skillarticles.data.remote.NetworkManager
-import ru.skillbranch.skillarticles.data.remote.req.EditReq
+import ru.skillbranch.skillarticles.data.remote.req.EditProfileReq
 
 interface IProfileRepository {
     fun getProfile(): LiveData<User?>
@@ -26,7 +26,7 @@ object ProfileRepository : IProfileRepository{
     }
 
     override suspend fun editProfile(name: String, about: String) {
-        val profileEditRes = network.edit(EditReq(name, about), prefs.accessToken)
+        val profileEditRes = network.edit(EditProfileReq(name, about), prefs.accessToken)
         prefs.profile = prefs.profile!!.copy(
             id = profileEditRes.id,
             name = profileEditRes.name,
