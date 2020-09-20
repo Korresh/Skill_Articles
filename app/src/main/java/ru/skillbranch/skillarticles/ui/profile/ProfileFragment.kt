@@ -47,7 +47,7 @@ class ProfileFragment() : BaseFragment<ProfileViewModel>() {
     private lateinit var resultRegistry: ActivityResultRegistry
     var _mockFactory: ((SavedStateRegistryOwner)-> ViewModelProvider.Factory)? = null
 
-    override val viewModel: ProfileViewModel by viewModels{
+    public override val viewModel: ProfileViewModel by viewModels{
         _mockFactory?.invoke(this) ?: defaultViewModelProviderFactory
     }
     //override val viewModel: ProfileViewModel by viewModels()
@@ -58,12 +58,12 @@ class ProfileFragment() : BaseFragment<ProfileViewModel>() {
     @VisibleForTesting(otherwise = VisibleForTesting.NONE)
     constructor(
         mockRoot: RootActivity,
-        testRegistry : ActivityResultRegistry? = null,
-        mockFactory: ((SavedStateRegistryOwner)->ViewModelProvider)? = null
-    ): this(){
+        testRegistry: ActivityResultRegistry? = null,
+        mockFactory: ((SavedStateRegistryOwner)->ViewModelProvider.Factory)? = null
+    ) : this() {
         _mockRoot = mockRoot
         _mockFactory = mockFactory
-        if (testRegistry != null) resultRegistry =testRegistry
+        if (testRegistry != null) resultRegistry = testRegistry
     }
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     lateinit var permissionsLauncher: ActivityResultLauncher<Array<out String>>
@@ -77,6 +77,7 @@ class ProfileFragment() : BaseFragment<ProfileViewModel>() {
     lateinit var settingsLauncher: ActivityResultLauncher<Intent>
 
     override fun onAttach(context: Context) {
+        super.onAttach(context)
         if (!::resultRegistry.isInitialized) resultRegistry = requireActivity().activityResultRegistry
         permissionsLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions(),resultRegistry,::callbackPermissions)
         cameraLauncher  = registerForActivityResult(ActivityResultContracts.TakePicture(), resultRegistry,::callbackCamera)
@@ -119,14 +120,14 @@ class ProfileFragment() : BaseFragment<ProfileViewModel>() {
         }
         viewModel.oservePermissions(viewLifecycleOwner){
             // launch callback for request permissions
-            permissionsResultCallback.launch(it.toTypedArray())
+            permissionsLauncher.launch(it.toTypedArray())
         }
         viewModel.observeActivityResults(viewLifecycleOwner){
             when(it){
-                is PendingAction.GalleryAction -> galleryResultCallback.launch(it.payload)
-                is PendingAction.SettingsAction -> settingResultCallback.launch(it.payload)
-                is PendingAction.CameraAction -> cameraResultCallback.launch(it.payload)
-                is PendingAction.EditAction -> editPhotoResultCallback.launch(it.payload)
+                is PendingAction.GalleryAction -> galleryLauncher.launch(it.payload)
+                is PendingAction.SettingsAction -> settingsLauncher.launch(it.payload)
+                is PendingAction.CameraAction -> cameraLauncher.launch(it.payload)
+                is PendingAction.EditAction -> editPhotoLauncher.launch(it.payload)
             }
         }
     }
@@ -172,8 +173,7 @@ class ProfileFragment() : BaseFragment<ProfileViewModel>() {
     }
 
 
-    private val permissionsResultCallback =
-        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
+    private fun callbackPermissions(result: Map<String, Boolean>){
             Log.e("ProfileManagment", "request runtime permissions result: $result");
             val permissionResult = result.mapValues { (permission, isGranted) ->
                 if (isGranted) {
@@ -189,19 +189,14 @@ class ProfileFragment() : BaseFragment<ProfileViewModel>() {
         viewModel.handlePermission(permissionResult)
     }
 
-    private val galleryResultCallback = registerForActivityResult(ActivityResultContracts.GetContent()){result ->
+    private fun callbackGallery(result: Uri?){
         if (result !=null){
             val inputStream = requireContext().contentResolver.openInputStream(result)
             viewModel.handleUploadPhoto(inputStream)
         }
     }
-    private val settingResultCallback =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        //DO something with result if need
-    }
 
-    private val cameraResultCallback =
-        registerForActivityResult(ActivityResultContracts.TakePicture()) {result->
+    private fun callbackCamera(result: Boolean){
             val(payload) = binding.pendingAction as PendingAction.CameraAction
             //if take photo from camera upload to server
             if (result){
@@ -213,8 +208,7 @@ class ProfileFragment() : BaseFragment<ProfileViewModel>() {
             }
     }
 
-    private val editPhotoResultCallback =
-        registerForActivityResult(EditImageContract()){result ->
+    private fun callbackEditPhoto(result: Uri?){
             if (result != null){
                 val inputStream = requireContext().contentResolver.openInputStream(result)
                 viewModel.handleUploadPhoto(inputStream)

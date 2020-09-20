@@ -113,4 +113,3 @@ dependencies {
     androidTestImplementation "android.arch.core:core-testing:1.1.1"
     debugImplementation 'androidx.fragment:fragment-testing:1.2.5'
 }
-

@@ -2,6 +2,7 @@ package ru.skillbranch.skillarticles.ui.base
 
 import android.os.Bundle
 import android.view.*
+import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.activity_root.*
 import ru.skillbranch.skillarticles.ui.RootActivity
@@ -10,11 +11,16 @@ import ru.skillbranch.skillarticles.viewmodels.base.IViewModelState
 import ru.skillbranch.skillarticles.viewmodels.base.Loading
 
 abstract class BaseFragment<T : BaseViewModel<out IViewModelState>> : Fragment() {
+    // mock root for testing
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    var _mockRoot: RootActivity? = null
     val root: RootActivity
-        get() = activity as RootActivity
-    open val binding: Binding? = null
+        get() = _mockRoot ?: activity as RootActivity
+    @VisibleForTesting(otherwise = VisibleForTesting.PROTECTED)
     protected abstract val viewModel : T
     protected abstract val layout: Int
+    open val binding: Binding? = null
+
 
     open val prepareToolbar : (ToolbarBuilder.()-> Unit)? = null
     open val prepareBottombar : (BottomBarBuilder.()-> Unit)? = null

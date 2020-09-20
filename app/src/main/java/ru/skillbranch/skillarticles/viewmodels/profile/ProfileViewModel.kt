@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Parcel
 import android.os.Parcelable
 import android.provider.Settings
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
@@ -42,7 +43,8 @@ class ProfileViewModel(handle: SavedStateHandle) :
             )
         }
     }
-    private fun startForResult(action: PendingAction){
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    fun startForResult(action: PendingAction){
         activityResults.value = Event(action)
     }
 
@@ -73,7 +75,7 @@ class ProfileViewModel(handle: SavedStateHandle) :
         }
     }
 
-    private fun executeOpenSettings() {
+    fun executeOpenSettings() {
         val errHandler = {
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                 data = Uri.parse("package:ru.skillbranch.skillarticles")
@@ -83,7 +85,7 @@ class ProfileViewModel(handle: SavedStateHandle) :
         notify(Notify.ErrorMessage("Need permissions for storage", "Open settings", errHandler))
     }
 
-    private fun executePendingAction() {
+    fun executePendingAction() {
         val pendingAction = currentState.pendingAction ?: return
         startForResult(pendingAction)
     }

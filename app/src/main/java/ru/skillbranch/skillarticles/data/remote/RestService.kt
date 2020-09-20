@@ -3,6 +3,7 @@ package ru.skillbranch.skillarticles.data.remote
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.*
+import ru.skillbranch.skillarticles.data.remote.req.EditReq
 import ru.skillbranch.skillarticles.data.remote.req.LoginReq
 import ru.skillbranch.skillarticles.data.remote.req.MessageReq
 import ru.skillbranch.skillarticles.data.remote.req.RefreshReq
@@ -87,6 +88,21 @@ interface RestService {
         @Part file: MultipartBody.Part?,
         @Header("Authorization") token: String
     ): UploadRes
+
+    //https://skill-articles.skill-branch.ru/api/v1/profile/avatar/remove
+
+    @PUT("profile/avatar/remove")
+    suspend fun remove(
+        @Header("Authorization") token: String
+    ): UploadRes
+
+    //https://skill-articles.skill-branch.ru/api/v1/profile/avatar/edit
+    @PUT("profile")
+    suspend fun edit(
+        @Body editReq: EditReq,
+        @Header("Authorization") token: String
+    ): ProfileEditRes
+
 }
 
 
