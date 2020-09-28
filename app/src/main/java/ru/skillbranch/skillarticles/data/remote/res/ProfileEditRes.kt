@@ -1,11 +1,13 @@
 package ru.skillbranch.skillarticles.data.remote.res
 
+import java.util.*
+
 data class ProfileEditRes(
-    val updatedAt: Long?,
     val id: String,
-    val avatar: String,
     val name: String,
+    val avatar: String,
     val about: String,
     val rating: Int,
-    val respect: Int
+    val respect: Int,
+    val updatedAt: Date = Date()
 )
