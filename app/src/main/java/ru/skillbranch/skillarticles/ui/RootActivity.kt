@@ -68,12 +68,13 @@ class RootActivity : AppCompatActivity() {
         })
         searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
 
-            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+
+            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
                 viewModel.handleSearchMode(true)
                 return true
             }
 
-            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
                 viewModel.handleSearchMode(false)
                 return true
             }

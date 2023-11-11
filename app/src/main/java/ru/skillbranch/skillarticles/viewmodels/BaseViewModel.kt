@@ -33,7 +33,7 @@ abstract class BaseViewModel<T>(initState: T) : ViewModel() {
     @UiThread
     protected inline fun updateState(update: (currentState: T) -> T) {
         val updatedState: T = update(currentState)
-        state.value = updatedState
+        state.value = updatedState!!
     }
 
     /***
@@ -111,11 +111,13 @@ class Event<out E>(private val content: E) {
  */
 class EventObserver<E>(private val onEventUnhandledContent: (E) -> Unit) : Observer<Event<E>> {
 
-    override fun onChanged(event: Event<E>?) {
+
+
+    override fun onChanged(event: Event<E>) {
         /***
-        *если есть необработанное событие (контент) передай в качестве аргумента в лямбду
-        * onEventUnhandledContent
-        */
+         *если есть необработанное событие (контент) передай в качестве аргумента в лямбду
+         * onEventUnhandledContent
+         */
         event?.getContentIfNotHandled()?.let {
             onEventUnhandledContent(it)
         }

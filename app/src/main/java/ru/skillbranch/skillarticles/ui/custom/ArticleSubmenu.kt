@@ -8,18 +8,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewAnimationUtils
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import com.google.android.material.shape.MaterialShapeDrawable
 import ru.skillbranch.skillarticles.databinding.LayoutSubmenuBinding
 import ru.skillbranch.skillarticles.extensions.dpToPx
+import ru.skillbranch.skillarticles.ui.custom.behaviors.SubmenuBehavior
 import kotlin.math.hypot
 
 class ArticleSubmenu @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) : ConstraintLayout(context, attrs, defStyleAttr) {
+) : ConstraintLayout(context, attrs, defStyleAttr), CoordinatorLayout.AttachedBehavior {
 
     val binding: LayoutSubmenuBinding
     private var isOpen = false
@@ -33,11 +35,6 @@ class ArticleSubmenu @JvmOverloads constructor(
         materialBg.elevation = elevation
         background = materialBg
     }
-
-//    override fun getBehavior(): CoordinatorLayout.Behavior<ArticleSubmenu> {
-//        return SubMenuBehavior()
-//    }
-
 
     fun open() {
         if (isOpen || !isAttachedToWindow) return
@@ -119,6 +116,8 @@ class ArticleSubmenu @JvmOverloads constructor(
         }
     }
 
-
+    override fun getBehavior(): CoordinatorLayout.Behavior<*> {
+        return SubmenuBehavior()
+    }
 
 }

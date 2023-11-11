@@ -11,7 +11,8 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:theme="@style/ArticleBarsTheme"
@@ -24,6 +25,7 @@
             app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
             android:elevation="4dp"/>
     </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -41,24 +43,21 @@
         android:theme="@style/ArticleBarsTheme"
         android:layout_width="200dp"
         android:layout_height="96dp"
-        android:layout_gravity="bottom|right"
+        android:layout_gravity="bottom|end"
         android:elevation="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         app:layout_dodgeInsetEdges="bottom"
         android:visibility="gone"
-        tools:visibility="visible"
-        app:layout_behavior="ru.skillbranch.skillarticles.ui.custom.behaviors.SubmenuBehavior"/>
+        tools:visibility="visible"/>
 
     <ru.skillbranch.skillarticles.ui.custom.Bottombar
         android:id="@+id/bottombar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:minHeight="56dp"
         android:layout_gravity="bottom"
         android:theme="@style/ArticleBarsTheme"
         android:elevation="4dp"
-        app:layout_insetEdge="bottom"
-        app:layout_behavior="ru.skillbranch.skillarticles.ui.custom.behaviors.BottombarBehavior"/>
-
-
+        app:layout_insetEdge="bottom"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
