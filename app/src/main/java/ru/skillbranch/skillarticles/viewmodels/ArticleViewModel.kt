@@ -19,6 +19,7 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
                    shareLink = article.shareLink,
                    title = article.title,
                    category = article.category,
+                   author = article.author,
                    categoryIcon = article.categoryIcon,
                    date = article.date.format()
            )
@@ -125,12 +126,12 @@ class ArticleViewModel(private val articleId: String) : BaseViewModel<ArticleSta
         updateState { it.copy(isShowMenu = !it.isShowMenu) }
     }
 
-    fun handleSaerchMode(isSearch: Boolean){
-        //TODO
+    fun handleSearchMode(isSearch: Boolean){
+        updateState { it.copy(isSearch = isSearch) }
     }
 
     fun handleSearch(query: String?){
-        //TODO
+        updateState { it.copy(SearchQuery = query) }
     }
 }
 
@@ -145,7 +146,7 @@ data class ArticleState(
         val isDarkMode: Boolean = false,//темный режим
         val isSearch: Boolean = false,//режим поиска
         val SearchQuery: String? = null,//поисковый запрос
-        val SearchResults: List<Pair<Int,Int>> = emptyList(),//результаты поиска (стартовая и конечная прозиции)
+        val SearchResults: List<Pair<Int,Int>> = emptyList(),//результаты поиска (стартовая и конечная позиции)
         val SearchPosition: Int = 0,//текущая позиция найденного результата
         val shareLink: String? = null,//ссылка Share
         val title: String? = null,//заголовок статьи
