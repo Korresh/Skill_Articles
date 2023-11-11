@@ -112,8 +112,10 @@ class Event<out E>(private val content: E) {
 class EventObserver<E>(private val onEventUnhandledContent: (E) -> Unit) : Observer<Event<E>> {
 
     override fun onChanged(event: Event<E>?) {
-        //если есть необработанное событие (контент) передай в качестве аргумента в лямбду
-        // onEventUnhandledContent
+        /***
+        *если есть необработанное событие (контент) передай в качестве аргумента в лямбду
+        * onEventUnhandledContent
+        */
         event?.getContentIfNotHandled()?.let {
             onEventUnhandledContent(it)
         }
