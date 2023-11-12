@@ -1,12 +1,11 @@
 package ru.skillbranch.skillarticles.ui.custom.behaviors
 
 
-import android.util.Log
+
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.math.MathUtils
 import androidx.core.view.ViewCompat
-import com.google.android.material.appbar.AppBarLayout
 import ru.skillbranch.skillarticles.ui.custom.Bottombar
 
 
@@ -22,7 +21,7 @@ class BottombarBehavior : CoordinatorLayout.Behavior<Bottombar>(){
         return axes == ViewCompat.SCROLL_AXIS_VERTICAL
 
     }
-
+    //not call if visibility gone
     override fun onNestedPreScroll(
         coordinatorLayout: CoordinatorLayout,
         child: Bottombar,
@@ -34,8 +33,9 @@ class BottombarBehavior : CoordinatorLayout.Behavior<Bottombar>(){
     ) {
         //if dy<0 scroll down
         //if dy>0 scroll up
-        child.translationY = MathUtils.clamp(child.translationY + dy, 0f, child.minHeight.toFloat())
-        Log.e("BottomBer behavior", "dy : $dy  translationY : ${child.translationY} ")
+        val offset = MathUtils.clamp(child.translationY + dy, 0f, child.minHeight.toFloat())
+        if (offset != child.translationY) child.translationY = offset
+        //Log.e("BottomBer behavior", "dy : $dy  translationY : ${child.translationY} ")
         super.onNestedPreScroll(coordinatorLayout, child, target, dx, dy, consumed, type)
     }
 }
